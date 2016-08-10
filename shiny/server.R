@@ -66,17 +66,18 @@ function(input, output, session) {
 						})
 			})		
 # Map under the "Trends" tab
-#	library(rgdal)	
-#	trendPoint <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\trends\\trends_layer packages\\",
-#		layer = "trends_full_dec_feb_vol", verbose = FALSE)
+	library(rgdal)	
+	trendPoint <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\Thesis_maps",
+		layer = "CV_huc", verbose = FALSE)
 	output$map_Trends <- renderLeaflet({
 			leaflet(gauges) %>%
 					addTiles(
 							urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
 							attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
 					) %>%
-					setView(lng = -120.42, lat = 37.52, zoom = 6) 
-#			%>% addMarkers(data = trendPoint)
+					setView(lng = -120.42, lat = 37.52, zoom = 6) %>%
+					addPolygons(data = trendPoint,
+							stroke = FALSE, fillOpacity = 0.5, smoothFactor = 0.5)
 		})		
 	
 	
