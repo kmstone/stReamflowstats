@@ -69,6 +69,8 @@ function(input, output, session) {
 	library(rgdal)	
 	trendPoint <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\Thesis_maps",
 		layer = "CV_huc", verbose = FALSE)
+	trendPoint2 <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\sample_figures",
+			layer = "active_93", verbose = FALSE)
 	output$map_Trends <- renderLeaflet({
 			leaflet(gauges) %>%
 					addTiles(
@@ -77,9 +79,32 @@ function(input, output, session) {
 					) %>%
 					setView(lng = -120.42, lat = 37.52, zoom = 6) %>%
 					addPolygons(data = trendPoint,
-							stroke = FALSE, fillOpacity = 0.5, smoothFactor = 0.5)
+							stroke = FALSE, fillOpacity = 0.5, smoothFactor = 0.5) %>%
+					addCircleMarkers(data = trendPoint2,
+							radius = 5,
+							color = "blue",
+							stroke = FALSE, fillOpacity = 0.5,
+							layerId = ~site_no)
 		})		
-	
+	observe({
+			leafletProxy("map_Trends", data=trendPoint2) %>% clearPopups()
+			event <- input$map_Trends_marker_click
+			if (is.null(event))
+				return()
+			
+			isolate({
+						##					leafletProxy("busmap") %>% addPopups(lng=event$lng,
+						##							lat=event$lat, popup=c("blah"))
+						d <- data.frame(x=seq(1,10,1),y=rnorm(10))
+						plottrend <- ggplot(d,aes(x,y)) + geom_point() + ggtitle(paste(event$id))
+						#x <- c(1,2,3,4,5)
+						#plotd <- hist(x, breaks = "Sturges", main = paste("Histogram of Specific Gauge"), xlab = "year", ylab = "value")
+						output$plot_trend <- renderPlot({
+									plottrend
+								})
+						showGaugePopup(event)
+					})
+		})
 	
 # full record map under "MAPS" tab
 	output$map_full <- renderLeaflet({
@@ -136,14 +161,21 @@ function(input, output, session) {
 #			%>% addMarkers(data = trendPoint)
 		})		
 
-# Maps under the "Allocation & Demand" tab
+# Maps under the "Allocation & Demand" tab (this shp file won't work on map_ad1)
+#	library(rgdal)	
+#	alldem <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\sample_figures",
+#				layer = "all_dem", verbose = FALSE)
+
 	output$map_ad1 <- renderLeaflet({
 			leaflet(gauges) %>%
 					addTiles(
 							urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
 							attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
 					) %>%
-					setView(lng = -120.42, lat = 37.52, zoom = 6)
+					setView(lng = -120.42, lat = 37.52, zoom = 6) 
+	#					%>%
+	#				addPolygons(data = alldem,
+	#						stroke = FALSE, fillOpacity = 0.5, smoothFactor = 0.5)
 		})	
 
 	output$map_ad2 <- renderLeaflet({
