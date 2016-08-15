@@ -58,7 +58,7 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 				tabPanel("Trends",
 						fluidRow(
 								column(width=8,
-										box(leafletOutput("map_Trends", height = 700), width = NULL, solidHeader = TRUE)
+										box(leafletOutput("map_Trends", height = 600), width = NULL, solidHeader = TRUE)
 								),
 								sidebarPanel(selectInput("timeperiod2", "Select time period",
 												choices = c("January" = 1, "February" = 2, "March" = 3, "April" = 4, "May" = 5,
@@ -130,11 +130,8 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 										column(width=8,
 												box(leafletOutput("map_OMR", height = 700), width = NULL, solidHeader = TRUE)
 										),
-										sidebarPanel(selectInput("timeperiod3", "Select time period",
-														choices = c("January" = 1, "February" = 2, "March" = 3, "April" = 4, "May" = 5,
-																"June" = 6, "July" = 7, "August" = 8, "September" = 9,
-																"October" = 10, "November" = 11, "December" = 12, "3-month" = 13,
-																"6-month" = 14, "Hydrologic year" = 15),
+										sidebarPanel(radioButtons("timeperiod3", "Select time period",
+														choices = c("December to February" = 1, "November to April"),
 														selected = "1"),
 												uiOutput("timeperiodchoice3"), width = 4,
 												actionButton("selection3", "Submit"))))),
