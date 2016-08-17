@@ -79,9 +79,9 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 								column(width=6, h2("Post-Impairment Record Length"),
 										box(leafletOutput("map_pi", height = 700), width = NULL, solidHeader = TRUE)
 								),
-								absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+								absolutePanel(id = "controls", fixed = TRUE,
 										draggable = TRUE, top = 300, left = "auto", right = 20, bottom = "auto",
-										width = "auto", height = "auto",
+										wellPanel(width = "auto", height = "auto",
 										h4("Map parameter selection"),	
 										selectInput("metric", "Select metric",
 												choices = c("Magnitude" = 1, "Duration" = 2, "Intra-annual frequency" = 3,
@@ -106,9 +106,9 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 												br(),
 												"Source data updates every 30 seconds."
 										)
-								)
+								), style = "opacity: 0.92"
 								
-						)),
+						))),
 				
 				navbarMenu("STARR",
 						tabPanel("STARR",
@@ -143,9 +143,9 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 								column(width=6,
 										box(leafletOutput("map_ad2", height = 700), width = NULL, solidHeader = TRUE)
 								),
-								absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-										draggable = TRUE, top = 300, left = "auto", right = 20, bottom = "auto",
-										width = "auto", height = "auto",
+								absolutePanel(id = "controls", fixed = TRUE,
+										draggable = TRUE, top = 150, left = "auto", right = 20, bottom = "auto",
+										wellPanel(width = "auto", height = "auto",
 										h4("Map parameter selection"),	
 										selectInput("timeperiod3", "Select time period",
 												choices = c("January" = 1, "February" = 2, "March" = 3, "April" = 4, "May" = 5,
@@ -154,10 +154,10 @@ shinyUI(navbarPage("Water Available for Ag-GB",
 														"6-month" = 14, "Hydrologic year" = 15),
 												selected = "1"),
 										actionButton("selection", "Submit")
-										)
-								)
+										), style = "opacity: 0.92"
+								))
 						
 						),
 				tabPanel("About"),
-				id = "nav", theme = "bootstrap.css"))
+				id = "nav", inverse = FALSE, theme = "bootstrap2.css", windowTitle = "Water Available for Ag-GB")) #I found this .css theme online at bootswatch.com
 

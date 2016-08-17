@@ -13,8 +13,8 @@ setwd("C:\\Users\\kmstone5\\git\\stReamflowstats\\shiny")
 
 
 
-#gauges <- read.csv("gauges.csv")
-#row.names(gauges)<- paste(gauges$site_no)
+gauges <- read.csv("gauges.csv")
+row.names(gauges)<- paste(gauges$site_no)
 library(rgdal)	
 polyCV <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\Thesis_maps",
 		layer = "CV_huc", verbose = FALSE)
@@ -23,10 +23,12 @@ markGauge <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny
 
 
 function(input, output, session) {
+
+#updateNavbarPage()	
 	
 # Map under the "Metrics" tab	
 	output$busmap <- renderLeaflet({
-				leaflet(metricsPoints) %>%
+				leaflet(gauges) %>%
 						addTiles(
 								urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
 								attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
@@ -72,7 +74,9 @@ function(input, output, session) {
 									})
 							showGaugePopup(event)
 						})
-			})		
+			})
+
+	
 # Map under the "Trends" tab
 	output$map_Trends <- renderLeaflet({
 			leaflet(gauges) %>%
@@ -90,33 +94,35 @@ function(input, output, session) {
 							layerId = ~site_no)
 		})
 
-# Labeling "Metrics" map with gauge number	
-#showGaugePopup1 <- function(event2) {
+# DRAFT! Labeling "Trends" map with gauge number	
+
+#showGaugePopup <- function(event) {
 #		selectedGauge <- gauges$site_no[id]
-#	content1 <- as.character(tagList(
-#					tags$h4(paste("USGS ",event2$id))
+#	content <- as.character(tagList(
+#					tags$h4(paste("USGS ",event$id))
 #			))
-#	leafletProxy("map_Trends") %>% addPopups(lng=event2$lng, lat=event2$lat, popup=content1)
+#	leafletProxy("map_Trends") %>% addPopups(lng=event$lng, lat=event$lat, popup=content)
 #}
 	observe({
 			leafletProxy("map_Trends", data=markGauge) %>% clearPopups()
-			event2 <- input$map_Trends_marker_click
-			if (is.null(event2))
+			event <- input$map_Trends_marker_click
+			if (is.null(event))
 				return()
 			
 			isolate({
 						##					leafletProxy("busmap") %>% addPopups(lng=event$lng,
 						##							lat=event$lat, popup=c("blah"))
 						d <- data.frame(x=seq(1,10,1),y=rnorm(10))
-						plottrend <- ggplot(d,aes(x,y)) + geom_point() + ggtitle(paste(event2$id))
+						plottrend <- ggplot(d,aes(x,y)) + geom_point() + ggtitle(paste(event$id))
 						#x <- c(1,2,3,4,5)
 						#plotd <- hist(x, breaks = "Sturges", main = paste("Histogram of Specific Gauge"), xlab = "year", ylab = "value")
 						output$plot_trend <- renderPlot({
 									plottrend
 								})
-						showGaugePopup(event2)
+						showGaugePopup(event)
 					})
 		})
+
 # Maps under the "Maps" tab
 # full record map under "MAPS" tab
 	output$map_full <- renderLeaflet({
@@ -169,6 +175,7 @@ function(input, output, session) {
 								stroke = FALSE, fillOpacity = 0.5,
 								layerId = ~site_no)
 			})		
+
 # DRAFT! Labeling "STARR" map with classifications	
 	showClassPopup <- function(event) {
 		content <- as.character(tagList(
@@ -176,7 +183,7 @@ function(input, output, session) {
 				))
 		leafletProxy("map_STARR") %>% addPopups(popup=content)
 	}
-	
+
 # Map under the "OMR" tab
 	library(rgdal)	
 #	trendPoint <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\trends\\trends_layer packages\\",
@@ -200,7 +207,7 @@ function(input, output, session) {
 # Maps under the "Allocation & Demand" tab (this shp file won't work on map_ad1)
 	library(rgdal)	
 	all_dem <- readOGR(dsn="C:\\Users\\kmstone5\\Google Drive\\SRA_Kathleen\\shiny_stuff\\sample_figures",
-				layer = "all_dem", verbose = TRUE)
+				layer = "all_dem", verbose = FALSE)
 
 	output$map_ad1 <- renderLeaflet({
 			leaflet(gauges) %>%
